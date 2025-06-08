@@ -40,7 +40,6 @@ class FileHelper
     static function normalizeNumericValue($value)
     {
         if (is_null($value)) return 0;
-
         // Buang spasi
         $value = trim($value);
 
@@ -48,7 +47,7 @@ class FileHelper
         if (preg_match('/^\d{1,3}(\.\d{3})*(,\d{1,2})?$/', $value)) {
             $value = str_replace('.', '', $value); // hilangkan titik ribuan
             $value = str_replace(',', '.', $value); // ubah koma desimal ke titik
-        }else if (preg_match('/^\d{1,3}(,\d{3})*(\.\d{1,2})?$/', $value)) {
+        } else if (preg_match('/^\d{1,3}(,\d{3})*(\.\d{1,2})?$/', $value)) { //(format Amerika: 1,999.50)
             $value = str_replace(',', '', $value); // Hapus koma ribuan
         }
 
@@ -56,5 +55,42 @@ class FileHelper
         // Kalau format sudah berupa angka, langsung pakai
 
         return (float) $value;
+    }
+
+    static function normalizeNumericValueV2($value)
+    {
+        $value = trim((string)$value);
+
+        // Jika angka bulat kecil, misalnya 1, 2, 3 — biarkan
+        if (ctype_digit($value) && intval($value) < 100) {
+            return $value;
+        }
+
+        // Format benar seperti 2612.28 → langsung return
+        if (preg_match('/^\d+\.\d{1,2}$/', $value)) {
+            return $value;
+        }
+
+        // Jika nilainya seperti 2.61228 (dan ada 5 digit pecahan), kemungkinan besar maksudnya 2612.28
+        if (is_numeric($value) && preg_match('/^\d+\.\d{4,5}$/', $value)) {
+            return number_format(floatval($value) * 1000, 2, '.', '');
+        }
+
+        // Format Indonesia 1.234,56
+        if (preg_match('/^\d{1,3}(\.\d{3})*(,\d{2})$/', $value)) {
+            return str_replace(['.', ','], ['', '.'], $value);
+        }
+
+        // Format Inggris 1,234.56
+        if (preg_match('/^\d{1,3}(,\d{3})*(\.\d{2})$/', $value)) {
+            return str_replace(',', '', $value);
+        }
+
+        // Jika angka bulat (misal 175645)
+        if (preg_match('/^\d+$/', $value)) {
+            return number_format(((int)$value) / 100, 2, '.', '');
+        }
+
+        return $value;
     }
 }

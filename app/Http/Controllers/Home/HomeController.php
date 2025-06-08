@@ -417,6 +417,7 @@ class HomeController extends Controller
                     }
 
                     $value = isset($cell->Data) ? (string)$cell->Data : '';
+                    $value = FileHelper::normalizeNumericValueV2($value);
                     $cells[$cellIndex] = $value;
 
                     $cellIndex++;
