@@ -16,6 +16,12 @@
 
 <body class="bg-slate-100">
     <div class="app">
+        <nav class="bg-white">
+            <ul class="flex gap-2 justify-center">
+                <li class="py-6 px-5 font-medium hover:font-semibold text-slate-500 cursor-pointer hover:text-slate-900" onclick="location.href='<?= route('home') ?>'">Generate Report</li>
+                <li class="py-6 px-5 font-medium hover:font-semibold text-slate-500 cursor-pointer hover:text-slate-900" onclick="location.href='<?= route('history') ?>'">History</li>
+            </ul>
+        </nav>
         <main class="">
             @yield('content')
         </main>
