@@ -34,7 +34,7 @@
         <!-- Tabs (Open, Closed) -->
         <div class="flex items-center gap-4 px-4 py-2 border-b border-slate-200 text-sm font-medium">
             <!-- <button class="border-b-2 border-blue-600 text-blue-600 pb-1">Today <span class="text-xs text-gray-500">(0)</span></button> -->
-            <button class="text-gray-600">All <span class="text-xs text-gray-500">(0)</span></button>
+            <button class="text-gray-600">All <span class="text-xs text-gray-500">({{$history->total()}})</span></button>
         </div>
 
         <!-- Filters -->
