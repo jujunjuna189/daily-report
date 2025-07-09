@@ -20,7 +20,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('home.index');
+        $data['controller'] = $this;
+        return view('home.index', $data);
     }
 
     public function generateReport(Request $request)
@@ -100,6 +101,59 @@ class HomeController extends Controller
         }
 
         return redirect()->route('preview');
+    }
+
+    public function generateReportV2(Request $request)
+    {
+        try {
+            $filesData = $request->file('files');
+            // Detec title from file
+            $files = [];
+            foreach ($filesData as $val) {
+                if (FileHelper::checkFile($val) == 'text/xml') {
+                    $file = $this->extractXmlToArray($val);
+                    $files[] = (object)[
+                        'title' => $file[2][0],
+                        'file' => $val,
+                    ];
+                } else if (FileHelper::checkFile($val) == 'text/html') {
+                    $file = $this->extractHtmlToArray($val);
+                    $files[] = (object)[
+                        'title' => $file[3][0],
+                        'file' => $val,
+                    ];
+                } else {
+                    $file = Excel::toArray([], $val);
+                    $files[] = (object)[
+                        'title' => $file[0][2][0],
+                        'file' => $val,
+                    ];
+                }
+            }
+
+            $newRequest = new Request();
+            foreach ($files as $val) {
+                if (strtolower($val->title) == 'laporan harian produksi') {
+                    $newRequest->files->add(['file-production' => $val->file]);
+                } else if (strtolower($val->title) == 'mutasi per barang per gudang') {
+                    $newRequest->files->add(['file-trans' => $val->file]);
+                } else if (strtolower($val->title) == 'rincian daftar pengeluaran bahan baku') {
+                    $newRequest->files->add(['file-issue' => $val->file]);
+                } else if (strtolower($val->title) == 'laporan do fg detail') {
+                    $newRequest->files->add(['file-do' => $val->file]);
+                }
+            }
+
+            $generateReport = $this->generateReport($newRequest);
+
+            if (count($newRequest->all()) == 4) {
+                return response()->json(['status' => 'success', 'data' => $generateReport]);
+            } else {
+                return response()->json(['status' => "error", 'errors' => "Upload all required files"], 500);
+            }
+        } catch (\Throwable $th) {
+            return response()->json(['status' => "error", 'errors' => $th->getMessage()], 500);
+        }
     }
 
     public function openXmlFormat(Request $request)

@@ -12,7 +12,17 @@
                     <span>Collect your files and upload them</span>
                 </div>
                 <div class="flex gap-5 mt-5 px-5 pb-5">
-                    <div class="flex justify-center items-center border border-dashed border-slate-400 bg-slate-100 grow rounded-md p-10"></div>
+                    <label for="drag&dropInput" id="dropZone" class="flex justify-center items-center border border-dashed border-slate-400 bg-slate-100 grow rounded-md py-10 px-10 cursor-pointer">
+                        <div class="flex flex-col items-center justify-center">
+                            <input type="file" class="hidden" id="dragDropInput" multiple onchange="onChangeDragDrop(this)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="text-slate-700" width="35" height="35" viewBox="0 0 24 24" fill="currentColor" class="icon icon-tabler icons-tabler-filled icon-tabler-library-plus">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M18.333 2a3.667 3.667 0 0 1 3.667 3.667v8.666a3.667 3.667 0 0 1 -3.667 3.667h-8.666a3.667 3.667 0 0 1 -3.667 -3.667v-8.666a3.667 3.667 0 0 1 3.667 -3.667zm-4.333 4a1 1 0 0 0 -1 1v2h-2a1 1 0 0 0 0 2h2v2a1 1 0 0 0 2 0v-2h2a1 1 0 0 0 0 -2h-2v-2a1 1 0 0 0 -1 -1" />
+                                <path d="M3.517 6.391a1 1 0 0 1 .99 1.738c-.313 .178 -.506 .51 -.507 .868v10c0 .548 .452 1 1 1h10c.284 0 .405 -.088 .626 -.486a1 1 0 0 1 1.748 .972c-.546 .98 -1.28 1.514 -2.374 1.514h-10c-1.652 0 -3 -1.348 -3 -3v-10.002a3 3 0 0 1 1.517 -2.605" />
+                            </svg>
+                            <span class="text-slate-500 text-sm mt-3">drag & drop files in this area</span>
+                        </div>
+                    </label>
                     <form action="{{ route('generate-report') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="pt-1">
@@ -187,5 +197,50 @@
             }
         });
     }
+
+    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const dropzone = document.getElementById('dropZone');
+    const dragDropInput = document.getElementById('dragDropInput');
+    // Drag & drop behavior
+    ['dragenter', 'dragover'].forEach(event => {
+        dropzone.addEventListener(event, e => {
+            e.preventDefault();
+            console.log('dragter');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(event => {
+        dropzone.addEventListener(event, e => {
+            e.preventDefault();
+            console.log('drag leave');
+        });
+    });
+
+    dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+
+        dragDropInput.files = files;
+
+        const formData = new FormData();
+        [...files].forEach(file => {
+            console.log('Dropped file:', file.name);
+            formData.append('files[]', file);
+        });
+
+        fetch('<?= route('generate-report-v2') ?>', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token
+            },
+            body: formData
+        }).then((res) => {
+            if (res.status == 200) {
+                location.href = '<?= route('preview') ?>';
+            } else {
+                location.reload();
+            }
+        });
+    });
 </script>
 @endsection

@@ -68,7 +68,7 @@
                         <td class="text-center text-sm py-2 px-2 text-slate-900 font-medium">{{ $val->date }}</td>
                         <td class="py-2 px-2 text-slate-900">
                             <div class="flex justify-end">
-                                <button class="text-sm px-3 py-1 bg-green-700 text-white rounded cursor-pointer">Preview</button>
+                                <a href="{{ route('preview', ['date' => $val->date]) }}" class="text-sm px-3 py-1 bg-green-700 text-white rounded cursor-pointer">Preview</a>
                             </div>
                         </td>
                     </tr>

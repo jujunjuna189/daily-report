@@ -1,4 +1,4 @@
-@extends('layouts.app', ['nav_bar' => true])
+@extends('layouts.app', ['nav_bar' => false])
 
 @section('content')
 <div class="">

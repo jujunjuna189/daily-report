@@ -32,10 +32,10 @@ class DatabaseSeeder extends Seeder
             ]
         ];
 
-        foreach($users as $user) {
+        foreach ($users as $user) {
             User::updateOrCreate([
                 'email' => $user['email']
-            ],[
+            ], [
                 'name' => $user['name'],
                 'password' => Hash::make($user['password'])
             ]);

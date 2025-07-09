@@ -15,6 +15,7 @@ Route::post('/login', [AuthController::class, 'actionLogin'])->name('action.logi
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::post('/generate-report', [HomeController::class, 'generateReport'])->name('generate-report');
+Route::post('/generate-report-v2', [HomeController::class, 'generateReportV2'])->name('generate-report-v2');
 
 Route::get('/preview', [PreviewController::class, 'index'])->name('preview');
 
