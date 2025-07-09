@@ -9,7 +9,7 @@
             <div class="flex items-center gap-2 ml-4">
                 <!-- <button class="text-sm px-2 py-1 border border-slate-200 cursor-pointer rounded bg-gray-100 hover:bg-gray-200">Labels</button>
                 <button class="text-sm px-2 py-1 border border-slate-200 cursor-pointer rounded bg-gray-100 hover:bg-gray-200">Milestones</button> -->
-                <button class="text-sm px-3 py-1 bg-slate-700 text-white rounded cursor-pointer">New Generate</button>
+                <button class="text-sm px-3 py-1 bg-slate-700 text-white rounded cursor-pointer" onclick="location.href='<?= route('home') ?>'">New Generate</button>
             </div>
         </div>
 
@@ -46,10 +46,40 @@
         </div> -->
 
         <!-- No results -->
+        @if(count($history) == 0)
         <div class="flex flex-col items-center justify-center p-10 text-gray-600">
             <p class="text-lg font-medium">No results</p>
             <p class="text-sm">Try adjusting your search filters.</p>
         </div>
+        @else
+        <div class="pt-1 pb-5">
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th class="text-sm text-gray-600 font-semibold w-20 bg-gray-200 py-2 px-2">#</th>
+                        <th class="text-sm text-gray-600 font-semibold w-50 bg-gray-200 py-2 px-2">Date</th>
+                        <th class="text-sm text-gray-600 font-semibold bg-gray-200 py-2 px-2"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($history as $key => $val)
+                    <tr class="{{ $loop->odd ? 'bg-white' : 'bg-gray-50' }}">
+                        <td class="text-center text-sm py-2 px-2 text-slate-900">{{ ($history->currentPage() - 1) * $history->perPage() + $loop->iteration }}</td>
+                        <td class="text-center text-sm py-2 px-2 text-slate-900 font-medium">{{ $val->date }}</td>
+                        <td class="py-2 px-2 text-slate-900">
+                            <div class="flex justify-end">
+                                <button class="text-sm px-3 py-1 bg-green-700 text-white rounded cursor-pointer">Preview</button>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="my-4 px-5">
+                {{ $history->links("vendor.pagination.tailwind") }}
+            </div>
+        </div>
+        @endif
     </div>
 </div>
 @endsection
