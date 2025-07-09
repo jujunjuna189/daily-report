@@ -5,7 +5,25 @@
     <div class="w-full max-w-4xl mx-auto mt-10 bg-white shadow rounded-lg border border-stone-200">
         <!-- Search bar and filters -->
         <div class="flex items-center justify-between p-4 border-b border-slate-200">
-            <input type="text" placeholder="Search..." class="w-full max-w-md border border-slate-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-0" readonly />
+            <!-- <input type="text" placeholder="Search..." class="w-full max-w-md border border-slate-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-0" readonly /> -->
+            <div class="flex gap-2">
+                <select id="month" value="{{ $filter['month'] }}" class="border border-slate-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-0" onchange="window.location.href = '<?= url('history') ?><?= $filter['year'] != 'all' ? '?year=' . $filter['year'] . '&' : '?' ?>' + (this.value ? 'month=' + this.value : '')">
+                    <option value="">-- Month --</option>
+                    @for ($i = 1; $i <= 12; $i++)
+                        <option value="{{ $i }}" {{ request('month') == $i ? 'selected' : '' }}>
+                        {{ DateTime::createFromFormat('!m', $i)->format('F') }}
+                        </option>
+                        @endfor
+                </select>
+                <select id="year" value="{{ $filter['year'] }}" class="border border-slate-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-0" onchange="window.location.href = '<?= url('history') ?><?= $filter['month'] != 'all' ? '?month=' . $filter['month'] . '&' : '?' ?>' + (this.value ? 'year=' + this.value : '')">
+                    <option value="">-- Year --</option>
+                    @for ($year = now()->year; $year >= 2015; $year--)
+                    <option value="{{ $year }}" {{ request('year') == $year ? 'selected' : '' }}>
+                        {{ $year }}
+                    </option>
+                    @endfor
+                </select>
+            </div>
             <div class="flex items-center gap-2 ml-4">
                 <!-- <button class="text-sm px-2 py-1 border border-slate-200 cursor-pointer rounded bg-gray-100 hover:bg-gray-200">Labels</button>
                 <button class="text-sm px-2 py-1 border border-slate-200 cursor-pointer rounded bg-gray-100 hover:bg-gray-200">Milestones</button> -->
