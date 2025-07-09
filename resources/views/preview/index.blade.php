@@ -12,7 +12,12 @@
                     <div class="bg-slate-300 px-3 py-1">
                         <span class="font-medium">Effective Date</span>
                     </div>
-                    <span>{{$date}}</span>
+                    <div class="flex gap-2">
+                        <span>{{$date}}</span>
+                        @if($endDate && $date != $endDate)
+                        <span>- {{$endDate}}</span>
+                        @endif
+                    </div>
                 </div>
             </div>
             <h1 class="text-3xl font-bold">DAILY REPORT</h1>

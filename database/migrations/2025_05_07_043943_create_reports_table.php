@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->date('date')->nullable();
+            $table->date('end_date')->nullable();
             $table->longText('production')->nullable();
             $table->longText('mutation')->nullable();
             $table->longText('issue')->nullable();

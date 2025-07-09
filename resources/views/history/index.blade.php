@@ -75,7 +75,9 @@
                 <thead>
                     <tr>
                         <th class="text-sm text-gray-600 font-semibold w-20 bg-gray-200 py-2 px-2">#</th>
-                        <th class="text-sm text-gray-600 font-semibold w-50 bg-gray-200 py-2 px-2">Date</th>
+                        <th class="text-sm text-gray-600 font-semibold w-50 bg-gray-200 py-2 px-2">From Date</th>
+                        <th class="text-sm text-gray-600 font-semibold w-50 bg-gray-200 py-2 px-2">To Date</th>
+                        <th class="text-sm text-gray-600 font-semibold w-50 bg-gray-200 py-2 px-2"></th>
                         <th class="text-sm text-gray-600 font-semibold bg-gray-200 py-2 px-2"></th>
                     </tr>
                 </thead>
@@ -83,10 +85,18 @@
                     @foreach($history as $key => $val)
                     <tr class="{{ $loop->odd ? 'bg-white' : 'bg-gray-50' }}">
                         <td class="text-center text-sm py-2 px-2 text-slate-900">{{ ($history->currentPage() - 1) * $history->perPage() + $loop->iteration }}</td>
-                        <td class="text-center text-sm py-2 px-2 text-slate-900 font-medium">{{ $val->date }}</td>
+                        <td class="text-center text-sm py-2 px-2 text-slate-900 font-medium">
+                            <span class="font-bold">{{ Carbon\Carbon::parse($val->date)->format('Y-m-d') }}</span>
+                        </td>
+                        <td class="text-center text-sm py-2 px-2 text-slate-900 font-medium">
+                            <span class="font-bold">{{ $val->end_date != null ? Carbon\Carbon::parse($val->end_date)->format('Y-m-d') : '-' }}</span>
+                        </td>
+                        <td class="text-center text-sm py-2 px-2 text-slate-900 font-medium">
+                            {{ $val->end_date ? \Carbon\Carbon::parse($val->date)->diffInDays(\Carbon\Carbon::parse($val->end_date)) + 1 : '-' }} <small>Day</small>
+                        </td>
                         <td class="py-2 px-2 text-slate-900">
                             <div class="flex justify-end">
-                                <a href="{{ route('preview', ['date' => $val->date]) }}" class="text-sm px-3 py-1 bg-green-700 text-white rounded cursor-pointer">Preview</a>
+                                <a href="{{ route('preview', ['id' => $val->id]) }}" class="text-sm px-3 py-1 bg-green-700 text-white rounded cursor-pointer">Preview</a>
                             </div>
                         </td>
                     </tr>

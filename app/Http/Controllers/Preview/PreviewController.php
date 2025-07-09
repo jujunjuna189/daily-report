@@ -12,16 +12,18 @@ class PreviewController extends Controller
 {
     public function index(Request $request)
     {
-        $model = Report::when($request->date, function ($query) use ($request) {
-            $query->where('date', $request->date);
+        $model = Report::when($request->id, function ($query) use ($request) {
+            $query->where('id', $request->id);
         })->orderBy('id', 'desc')->first();
 
         $date = $model->date;
+        $endDate = $model->end_date;
 
         $summary = $this->summary($date);
 
         $data = [
             "date" => Carbon::parse($date)->format('d-m-Y'),
+            "endDate" => Carbon::parse($endDate)->format('d-m-Y'),
             "production" => json_decode($model->production, true),
             "trans" => json_decode($model->mutation, true),
             "issue" => json_decode($model->issue, true),

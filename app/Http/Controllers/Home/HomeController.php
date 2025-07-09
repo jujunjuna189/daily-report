@@ -89,6 +89,7 @@ class HomeController extends Controller
 
             $model = new Report();
             $model->date = Carbon::parse($production['date'])->format("Y-m-d");
+            $model->end_date = Carbon::parse($production['end_date'])->format("Y-m-d");
             $model->production = json_encode($production['report']);
             $model->mutation = json_encode($trans['report']);
             $model->issue = json_encode($issue['report']);
@@ -163,16 +164,16 @@ class HomeController extends Controller
         $issue = $this->extractXmlToArray($request->file('file-issue'));
         $do = $this->extractXmlToArray($request->file('file-do'));
 
-        if (!isset(FileHelper::formatting($production[4][0])['to'])) throw new \Exception("Date is not in the correct format in the production file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
-        if (!isset(FileHelper::formatting($trans[4][0])['to'])) throw new \Exception("Date is not in the correct format in the product transfer file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
-        if (!isset(FileHelper::formatting($issue[4][0])['to'])) throw new \Exception("Date is not in the correct format in the material issue file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
-        if (!isset(FileHelper::formatting($do[4][0])['to'])) throw new \Exception("Date is not in the correct format in the do file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($production[4][0])['from'])) throw new \Exception("Date is not in the correct format in the production file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($trans[4][0])['from'])) throw new \Exception("Date is not in the correct format in the product transfer file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($issue[4][0])['from'])) throw new \Exception("Date is not in the correct format in the material issue file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($do[4][0])['from'])) throw new \Exception("Date is not in the correct format in the do file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $data = [
-            'production' => FileHelper::formatting($production[4][0])['to'],
-            'trans' => FileHelper::formatting($trans[4][0] ?? '')['to'],
-            'issue' => FileHelper::formatting($issue[4][0] ?? '')['to'],
-            'do' => FileHelper::formatting($do[4][0] ?? '')['to'],
+            'production' => FileHelper::formatting($production[4][0])['from'],
+            'trans' => FileHelper::formatting($trans[4][0] ?? '')['from'],
+            'issue' => FileHelper::formatting($issue[4][0] ?? '')['from'],
+            'do' => FileHelper::formatting($do[4][0] ?? '')['from'],
         ];
 
         $production = $this->extractXmlProductionReport($request->file('file-production'));
@@ -193,12 +194,13 @@ class HomeController extends Controller
     {
         $productionData = $this->extractXmlToArray($request->file('file-production'));
 
-        if (!isset(FileHelper::formatting($productionData[4][0])['to'])) throw new \Exception("Date is not in the correct format in the production file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($productionData[4][0])['from'])) throw new \Exception("Date is not in the correct format in the production file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $production = $this->extractXmlProductionReport($request->file('file-production'));
 
         $data = [
-            'date' => FileHelper::formatting($productionData[4][0])['to'],
+            'date' => FileHelper::formatting($productionData[4][0])['from'],
+            'end_date' => FileHelper::formatting($productionData[4][0])['to'],
             'report' => $production,
         ];
 
@@ -209,12 +211,13 @@ class HomeController extends Controller
     {
         $transData = $this->extractXmlToArray($request->file('file-trans'));
 
-        if (!isset(FileHelper::formatting($transData[4][0])['to'])) throw new \Exception("Date is not in the correct format in the product transfer file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($transData[4][0])['from'])) throw new \Exception("Date is not in the correct format in the product transfer file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $trans = $this->extractXmlTransReport($request->file('file-trans'));
 
         $data = [
-            'date' => FileHelper::formatting($transData[4][0])['to'],
+            'date' => FileHelper::formatting($transData[4][0])['from'],
+            'end_date' => FileHelper::formatting($transData[4][0])['to'],
             'report' => $trans,
         ];
 
@@ -225,12 +228,13 @@ class HomeController extends Controller
     {
         $issueData = $this->extractXmlToArray($request->file('file-issue'));
 
-        if (!isset(FileHelper::formatting($issueData[4][0])['to'])) throw new \Exception("Date is not in the correct format in the material issue file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($issueData[4][0])['from'])) throw new \Exception("Date is not in the correct format in the material issue file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $issue = $this->extractXmlIssueReport($request->file('file-issue'));
 
         $data = [
-            'date' => FileHelper::formatting($issueData[4][0])['to'],
+            'date' => FileHelper::formatting($issueData[4][0])['from'],
+            'end_date' => FileHelper::formatting($issueData[4][0])['to'],
             'report' => $issue,
         ];
 
@@ -241,12 +245,13 @@ class HomeController extends Controller
     {
         $doData = $this->extractXmlToArray($request->file('file-do'));
 
-        if (!isset(FileHelper::formatting($doData[4][0])['to'])) throw new \Exception("Date is not in the correct format in the do file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($doData[4][0])['from'])) throw new \Exception("Date is not in the correct format in the do file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $do = $this->extractXmlDoReport($request->file('file-do'));
 
         $data = [
-            'date' => FileHelper::formatting($doData[4][0])['to'],
+            'date' => FileHelper::formatting($doData[4][0])['from'],
+            'end_date' => FileHelper::formatting($doData[4][0])['to'],
             'report' => $do,
         ];
 
@@ -259,12 +264,13 @@ class HomeController extends Controller
     {
         $productionData = $this->extractHtmlToArray($request->file('file-production'));
 
-        if (!isset(FileHelper::formatting($productionData[5][0])['to'])) throw new \Exception("Date is not in the correct format in the production file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($productionData[5][0])['from'])) throw new \Exception("Date is not in the correct format in the production file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $production = $this->extractHtmlProductionReport($request->file('file-production'));
 
         $data = [
-            'date' => FileHelper::formatting($productionData[5][0])['to'],
+            'date' => FileHelper::formatting($productionData[5][0])['from'],
+            'end_date' => FileHelper::formatting($productionData[5][0])['to'],
             'report' => $production,
         ];
 
@@ -275,12 +281,13 @@ class HomeController extends Controller
     {
         $transData = $this->extractHtmlToArray($request->file('file-trans'));
 
-        if (!isset(FileHelper::formatting($transData[5][0])['to'])) throw new \Exception("Date is not in the correct format in the product transfer file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($transData[5][0])['from'])) throw new \Exception("Date is not in the correct format in the product transfer file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $trans = $this->extractHtmlTransReport($request->file('file-trans'));
 
         $data = [
-            'date' => FileHelper::formatting($transData[5][0])['to'],
+            'date' => FileHelper::formatting($transData[5][0])['from'],
+            'end_date' => FileHelper::formatting($transData[5][0])['to'],
             'report' => $trans,
         ];
 
@@ -291,12 +298,13 @@ class HomeController extends Controller
     {
         $issueData = $this->extractHtmlToArray($request->file('file-issue'));
 
-        if (!isset(FileHelper::formatting($issueData[5][0])['to'])) throw new \Exception("Date is not in the correct format in the material issue file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($issueData[5][0])['from'])) throw new \Exception("Date is not in the correct format in the material issue file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $issue = $this->extractHtmlIssueReport($request->file('file-issue'));
 
         $data = [
-            'date' => FileHelper::formatting($issueData[5][0])['to'],
+            'date' => FileHelper::formatting($issueData[5][0])['from'],
+            'end_date' => FileHelper::formatting($issueData[5][0])['to'],
             'report' => $issue,
         ];
 
@@ -307,12 +315,13 @@ class HomeController extends Controller
     {
         $doData = $this->extractHtmlToArray($request->file('file-do'));
 
-        if (!isset(FileHelper::formatting($doData[5][0])['to'])) throw new \Exception("Date is not in the correct format in the do file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($doData[5][0])['from'])) throw new \Exception("Date is not in the correct format in the do file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $do = $this->extractHtmlDoReport($request->file('file-do'));
 
         $data = [
-            'date' => FileHelper::formatting($doData[5][0])['to'],
+            'date' => FileHelper::formatting($doData[5][0])['from'],
+            'end_date' => FileHelper::formatting($doData[5][0])['to'],
             'report' => $do,
         ];
 
@@ -327,16 +336,16 @@ class HomeController extends Controller
         $issue = Excel::toArray([], $request->file('file-issue'));
         $do = Excel::toArray([], $request->file('file-do'));
 
-        if (!isset(FileHelper::formatting($production[0][4][0])['to'])) throw new \Exception("Date is not in the correct format in the production file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
-        if (!isset(FileHelper::formatting($trans[0][4][0])['to'])) throw new \Exception("Date is not in the correct format in the product transfer file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
-        if (!isset(FileHelper::formatting($issue[0][4][0])['to'])) throw new \Exception("Date is not in the correct format in the material issue file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
-        if (!isset(FileHelper::formatting($do[0][4][0])['to'])) throw new \Exception("Date is not in the correct format in the do file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($production[0][4][0])['from'])) throw new \Exception("Date is not in the correct format in the production file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($trans[0][4][0])['from'])) throw new \Exception("Date is not in the correct format in the product transfer file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($issue[0][4][0])['from'])) throw new \Exception("Date is not in the correct format in the material issue file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($do[0][4][0])['from'])) throw new \Exception("Date is not in the correct format in the do file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $data = [
-            'production' => FileHelper::formatting($production[0][4][0])['to'],
-            'trans' => FileHelper::formatting($trans[0][4][0] ?? '')['to'],
-            'issue' => FileHelper::formatting($issue[0][4][0] ?? '')['to'],
-            'do' => FileHelper::formatting($do[0][4][0] ?? '')['to'],
+            'production' => FileHelper::formatting($production[0][4][0])['from'],
+            'trans' => FileHelper::formatting($trans[0][4][0] ?? '')['from'],
+            'issue' => FileHelper::formatting($issue[0][4][0] ?? '')['from'],
+            'do' => FileHelper::formatting($do[0][4][0] ?? '')['from'],
         ];
 
         $production = $this->extractProductionReport($request->file('file-production'));
@@ -357,12 +366,13 @@ class HomeController extends Controller
     {
         $productionData = Excel::toArray([], $request->file('file-production'));
 
-        if (!isset(FileHelper::formatting($productionData[0][4][0])['to'])) throw new \Exception("Date is not in the correct format in the production file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($productionData[0][4][0])['from'])) throw new \Exception("Date is not in the correct format in the production file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $production = $this->extractProductionReport($request->file('file-production'));
 
         $data = [
-            'date' => FileHelper::formatting($productionData[0][4][0] ?? '')['to'],
+            'date' => FileHelper::formatting($productionData[0][4][0] ?? '')['from'],
+            'end_date' => FileHelper::formatting($productionData[0][4][0] ?? '')['to'],
             'report' => $production,
         ];
 
@@ -373,12 +383,13 @@ class HomeController extends Controller
     {
         $transData = Excel::toArray([], $request->file('file-trans'));
 
-        if (!isset(FileHelper::formatting($transData[0][4][0])['to'])) throw new \Exception("Date is not in the correct format in the product transfer file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($transData[0][4][0])['from'])) throw new \Exception("Date is not in the correct format in the product transfer file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $trans = $this->extractTransReport($request->file('file-trans'));
 
         $data = [
-            'date' => FileHelper::formatting($transData[0][4][0] ?? '')['to'],
+            'date' => FileHelper::formatting($transData[0][4][0] ?? '')['from'],
+            'end_date' => FileHelper::formatting($transData[0][4][0] ?? '')['to'],
             'report' => $trans,
         ];
 
@@ -389,12 +400,13 @@ class HomeController extends Controller
     {
         $issueData = Excel::toArray([], $request->file('file-issue'));
 
-        if (!isset(FileHelper::formatting($issueData[0][4][0])['to'])) throw new \Exception("Date is not in the correct format in the material issue file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($issueData[0][4][0])['from'])) throw new \Exception("Date is not in the correct format in the material issue file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $issue = $this->extractIssueReport($request->file('file-issue'));
 
         $data = [
-            'date' => FileHelper::formatting($issueData[0][4][0] ?? '')['to'],
+            'date' => FileHelper::formatting($issueData[0][4][0] ?? '')['from'],
+            'end_date' => FileHelper::formatting($issueData[0][4][0] ?? '')['to'],
             'report' => $issue,
         ];
 
@@ -405,12 +417,13 @@ class HomeController extends Controller
     {
         $doData = Excel::toArray([], $request->file('file-do'));
 
-        if (!isset(FileHelper::formatting($doData[0][4][0])['to'])) throw new \Exception("Date is not in the correct format in the do file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
+        if (!isset(FileHelper::formatting($doData[0][4][0])['from'])) throw new \Exception("Date is not in the correct format in the do file. Example: 'Dari 1 Jan 2025 ke 5 Jan 2025'");
 
         $do =  $this->extractDOReport($request->file('file-do'));
 
         $data = [
-            'date' => FileHelper::formatting($doData[0][4][0] ?? '')['to'],
+            'date' => FileHelper::formatting($doData[0][4][0] ?? '')['from'],
+            'end_date' => FileHelper::formatting($doData[0][4][0] ?? '')['to'],
             'report' => $do,
         ];
 
