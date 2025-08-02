@@ -20,3 +20,4 @@ Route::post('/generate-report-v2', [HomeController::class, 'generateReportV2'])-
 Route::get('/preview', [PreviewController::class, 'index'])->name('preview');
 
 Route::get('/history', [HistoryController::class, 'index'])->name('history');
+Route::post('/history/delete', [HistoryController::class, 'deleteReport'])->name('delete-report');

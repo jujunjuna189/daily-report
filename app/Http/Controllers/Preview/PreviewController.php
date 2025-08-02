@@ -23,7 +23,7 @@ class PreviewController extends Controller
 
         $data = [
             "date" => Carbon::parse($date)->format('d-m-Y'),
-            "endDate" => Carbon::parse($endDate)->format('d-m-Y'),
+            "endDate" => $endDate != null ? Carbon::parse($endDate)->format('d-m-Y') : null,
             "production" => json_decode($model->production, true),
             "trans" => json_decode($model->mutation, true),
             "issue" => json_decode($model->issue, true),

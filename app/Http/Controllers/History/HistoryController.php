@@ -27,4 +27,12 @@ class HistoryController extends Controller
 
         return view('history.index', $data);
     }
+
+    public function deleteReport(Request $request)
+    {
+        $model = Report::find($request->id);
+        $model->delete();
+
+        return redirect()->route('history', ['page' => $request->page]);
+    }
 }

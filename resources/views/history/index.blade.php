@@ -95,8 +95,14 @@
                             {{ $val->end_date ? \Carbon\Carbon::parse($val->date)->diffInDays(\Carbon\Carbon::parse($val->end_date)) + 1 : '-' }} <small>Day</small>
                         </td>
                         <td class="py-2 px-2 text-slate-900">
-                            <div class="flex justify-end">
+                            <div class="flex justify-end gap-1">
                                 <a href="{{ route('preview', ['id' => $val->id]) }}" class="text-sm px-3 py-1 bg-green-700 text-white rounded cursor-pointer">Preview</a>
+                                <form action="{{ route('delete-report') }}" method="post">
+                                    @csrf
+                                    <input type="text" name="id" id="id" value="{{$val->id}}" hidden>
+                                    <input type="text" name="page" id="page" value="{{(count($history) == 1 && $history->currentPage() > 1) ? ($history->currentPage() - 1) : $history->currentPage()}}" hidden>
+                                    <button type="submit" class="text-sm px-3 py-1 bg-red-900 text-white rounded cursor-pointer">Delete</button>
+                                </form>
                             </div>
                         </td>
                     </tr>

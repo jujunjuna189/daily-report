@@ -12,6 +12,7 @@ use App\Models\Report;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Excel as ExcelExcel;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -85,7 +86,24 @@ class HomeController extends Controller
                 $do = $this->openExcelFormatDo($request);
             }
 
-            Report::where('date', Carbon::parse($production['date'])->format("Y-m-d"))->delete();
+            $start = Carbon::parse($production['date']);
+            $end = Carbon::parse($production['end_date']);
+
+            // Validation date range
+            $reportHistory = Report::whereMonth('date', Carbon::parse($start)->month)->select('*')
+                ->selectRaw('DATEDIFF(end_date, date) as total_days')
+                ->orderByDesc('total_days')->first();
+            if (isset($reportHistory) && ($reportHistory->total_days + 1) > 1) {
+                return redirect()->back()
+                    ->withErrors("The report date you uploaded is available in the report with the date from $reportHistory->date to $reportHistory->end_date.")
+                    ->withInput();
+            }
+
+            while ($start->lte($end)) {
+                Report::where('date', Carbon::parse($start)->format("Y-m-d"))->delete();
+
+                $start->addDay();
+            }
 
             $model = new Report();
             $model->date = Carbon::parse($production['date'])->format("Y-m-d");
