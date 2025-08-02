@@ -133,21 +133,36 @@ class HomeController extends Controller
                     $file = $this->extractXmlToArray($val);
                     $files[] = (object)[
                         'title' => $file[2][0],
+                        'date' => FileHelper::formatting($file[4][0] ?? '')['from'],
                         'file' => $val,
                     ];
                 } else if (FileHelper::checkFile($val) == 'text/html') {
                     $file = $this->extractHtmlToArray($val);
                     $files[] = (object)[
                         'title' => $file[3][0],
+                        'date' => FileHelper::formatting($file[5][0] ?? '')['from'],
                         'file' => $val,
                     ];
                 } else {
                     $file = Excel::toArray([], $val);
                     $files[] = (object)[
                         'title' => $file[0][2][0],
+                        'date' => FileHelper::formatting($file[0][4][0] ?? '')['from'],
                         'file' => $val,
                     ];
                 }
+            }
+
+            $start = Carbon::parse($files[0]->date);
+            // Validation date range
+            $reportHistory = Report::whereMonth('date', Carbon::parse($start)->month)->select('*')
+                ->selectRaw('DATEDIFF(end_date, date) as total_days')
+                ->orderByDesc('total_days')->first();
+            if (isset($reportHistory) && ($reportHistory->total_days + 1) > 1) {
+                redirect()->back()
+                    ->withErrors("The report date you uploaded is available in the report with the date from $reportHistory->date to $reportHistory->end_date.")
+                    ->withInput();
+                return response()->json(['status' => "error", 'errors' => "The report date you uploaded is available in the report with the date from $reportHistory->date to $reportHistory->end_date."], 500);
             }
 
             $newRequest = new Request();
